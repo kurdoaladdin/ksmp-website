@@ -12,9 +12,9 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background: #0f0f13;
+            background: #0d0d12;
             color: #ffffff;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,41 +23,148 @@
         }
         .container {
             max-width: 600px;
-            background: #181820;
+            width: 100%;
+            background: #16161e;
             padding: 40px;
-            border-radius: 16px;
-            border: 1px solid #2a2a38;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            border: 1px solid #282836;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        /* Kurdistan Flag Styling */
+        .kurd-flag {
+            width: 42px;
+            height: 28px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .flag-red { background: #EE2324; flex: 1; }
+        .flag-white { 
+            background: #FFFFFF; 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: relative;
+        }
+        .flag-green { background: #007A3D; flex: 1; }
+        .sun {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FECC00;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #FECC00;
         }
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             color: #ffaa00;
-            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
         p {
-            font-size: 1.1rem;
-            color: #a0a0b0;
+            font-size: 1.05rem;
+            color: #9a9ab0;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
         .ip-box {
-            background: #0f0f13;
-            padding: 12px 20px;
-            border-radius: 8px;
+            background: #0d0d12;
+            padding: 14px 24px;
+            border-radius: 10px;
             display: inline-block;
             border: 1px dashed #ffaa00;
             font-family: monospace;
             font-size: 1.2rem;
             color: #fff;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: 0.2s ease;
         }
+        .ip-box:hover {
+            background: #1a1a24;
+            border-color: #ffc44d;
+        }
+        /* Live Status Widget */
+        .status-card {
+            background: #111118;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            border: 1px solid #20202d;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #777;
+        }
+        .dot.online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .dot.offline { background: #ef4444; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>KURDOSMP</h1>
-        <p>Our official Minecraft SMP website is currently under construction. Stay tuned!</p>
-        <div class="ip-box">Play: play.kurdosmp.net</div>
+        <div class="header">
+            <!-- Kurdistan Flag Element -->
+            <div class="kurd-flag" title="Kurdistan">
+                <div class="flag-red"></div>
+                <div class="flag-white"><div class="sun"></div></div>
+                <div class="flag-green"></div>
+            </div>
+            <h1>KURDOSMP</h1>
+        </div>
+        
+        <p>Our official Minecraft SMP website is under construction. Join the server directly below!</p>
+        
+        <div class="ip-box" onclick="navigator.clipboard.writeText('kurdosmp.net'); alert('IP Copied to Clipboard!');">
+            Server IP: <strong>kurdosmp.net</strong>
+        </div>
+
+        <div class="status-card">
+            <span class="dot" id="status-dot"></span>
+            <span id="player-count">Checking server status...</span>
+        </div>
     </div>
+
+    <script>
+        const serverIP = "kurdosmp.net";
+
+        async function fetchServerStatus() {
+            try {
+                const response = await fetch(`https://api.mcsrvstat.us/2/${serverIP}`);
+                const data = await response.json();
+
+                const dot = document.getElementById('status-dot');
+                const text = document.getElementById('player-count');
+
+                if (data.online) {
+                    dot.className = "dot online";
+                    text.innerText = `Online: ${data.players.online} / ${data.players.max} players`;
+                } else {
+                    dot.className = "dot offline";
+                    text.innerText = "Server is currently offline";
+                }
+            } catch (error) {
+                document.getElementById('player-count').innerText = "Status unavailable";
+            }
+        }
+
+        fetchServerStatus();
+    </script>
 </body>
 </html>
